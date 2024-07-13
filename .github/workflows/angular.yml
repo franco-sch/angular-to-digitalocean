@@ -80,10 +80,23 @@ jobs:
           name: dist
           path: dist
 
+      - name: Debug file structure
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Contents of current directory:"
+          ls -la
+          echo "Contents of .do directory:"
+          ls -la .do || echo ".do directory not found"
+          echo "Contents of app.yaml:"
+          cat .do/app.yaml || echo "app.yaml not found"
+          echo "Full path of app.yaml:"
+          find . -name app.yaml
+
       - name: Deploy to DigitalOcean App Platform
         run: |
           doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} \
-            --spec .do/app.yaml \
+            --spec $(pwd)/.do/app.yaml \
             --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} \
             ---access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
