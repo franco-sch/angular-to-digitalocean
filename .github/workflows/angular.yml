@@ -10,97 +10,23 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
-    steps:
-      - name: Checkout the source code
-        uses: actions/checkout@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "yarn"
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache yarn dependencies
-        uses: actions/cache@v3
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Cache Angular CLI cache
-        uses: actions/cache@v3
-        with:
-          path: .angular/cache
-          key: ${{ runner.os }}-angular-cache-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-angular-cache-
-
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
-
-      - name: Run tests
-        run: yarn test --configuration=ci
-
-      - name: Build
-        run: yarn build --configuration=production
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist/
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: dist
-
-      - name: Debug file structure
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Contents of current directory:"
-          ls -la
-          echo "Contents of .do directory:"
-          ls -la .do || echo ".do directory not found"
-          echo "Contents of app.yaml:"
-          cat .do/app.yaml || echo "app.yaml not found"
-          echo "Full path of app.yaml:"
-          find . -name app.yaml
-
       - name: Deploy to DigitalOcean App Platform
         run: |
           doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} \
-            --spec $(pwd)/.do/app.yaml \
+            --spec .do/app.yaml \
             --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} \
             --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}

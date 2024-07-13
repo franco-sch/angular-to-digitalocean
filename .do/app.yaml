@@ -1,14 +1,16 @@
 name: angular-to-digital-ocean
 static_sites:
-  - name: angular-site
-    github:
-      repo: franco-sch/angular-to-digitalocean
-      branch: main
-      deploy_on_push: false
-    source_dir: dist
-    output_dir: /
-    index_document: index.html
-    error_document: index.html
-    routes:
-      - path: /
-        preserve_path_prefix: false
+- name: angular-site
+  github:
+    repo: ${{ github.repository }}
+    branch: main
+    deploy_on_push: false
+  source_dir: /
+  output_dir: dist  # This should match your Angular output directory
+  index_document: index.html
+  error_document: index.html
+  routes:
+  - path: /
+    preserve_path_prefix: false
+  build_command: yarn build --configuration=production
+  environment_slug: node-js
