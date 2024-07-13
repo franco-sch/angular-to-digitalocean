@@ -57,6 +57,12 @@ jobs:
       - name: Build
         run: yarn build --configuration=production
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
