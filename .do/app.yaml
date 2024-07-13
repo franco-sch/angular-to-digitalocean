@@ -2,7 +2,7 @@ name: angular-to-digital-ocean
 static_sites:
 - name: angular-site
   github:
-    repo: ${{ github.repository }}
+    repo: franco-sch/angular-to-digitalocean
     branch: main
     deploy_on_push: false
   source_dir: /
