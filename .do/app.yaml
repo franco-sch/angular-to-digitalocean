@@ -5,7 +5,7 @@ static_sites:
       repo: franco-sch/angular-to-digitalocean
       branch: main
       deploy_on_push: false
-    source_dir: /
+    source_dir: dist
     output_dir: /
     index_document: index.html
     error_document: index.html

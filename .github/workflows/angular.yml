@@ -80,10 +80,6 @@ jobs:
           name: dist
           path: dist
 
-      - name: Update app.yaml
-        run: |
-          sed -i 's#source_dir: /#source_dir: dist#' .do/app.yaml
-
       - name: Deploy to DigitalOcean App Platform
         run: |
           doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} \
