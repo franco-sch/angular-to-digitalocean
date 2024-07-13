@@ -76,8 +76,14 @@ jobs:
         name: dist
         path: dist
 
-    - name: Deploy to DigitalOcean App Platform
+    - name: Update app.yaml
       run: |
-        doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} \
-          --token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} \
-          --force-rebuild
+        sed -i 's#source_dir: /#source_dir: dist#' .do/app.yaml
+    
+    - name: Deploy to DigitalOcean App Platform
+          run: |
+            doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} \
+              --spec .do/app.yaml \
+              --token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} \
+              --token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}

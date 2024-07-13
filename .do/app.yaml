@@ -1,0 +1,14 @@
+name: angular-to-digital-ocean
+static_sites:
+  - name: angular-site
+    github:
+      repo: franco-sch/angular-to-digitalocean
+      branch: main
+      deploy_on_push: false
+    source_dir: /
+    output_dir: /
+    index_document: index.html
+    error_document: index.html
+    routes:
+      - path: /
+        preserve_path_prefix: false
