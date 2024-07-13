@@ -103,4 +103,4 @@ jobs:
             --spec $(pwd)/.do/app.yaml \
             --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} \
-            ---access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
